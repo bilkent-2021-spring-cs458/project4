@@ -1,6 +1,5 @@
 package tr.com.bilkent.fods.config;
 
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,11 +22,16 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
-@AllArgsConstructor(onConstructor_ = @Autowired)
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userService;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public WebSecurityConfig(UserDetailsService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -39,10 +43,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().cors().and()
 
                 .authorizeRequests()
-                .antMatchers("/**/register").permitAll()
-                .antMatchers("/customer/**").hasRole("CUSTOMER")
-                .antMatchers("/deliverer/**").hasRole("DELIVERER")
-                .antMatchers("/manager/**").hasRole("RESTAURANT_MANAGER").and()
+                .antMatchers("/user/register").permitAll()
+                .anyRequest().hasRole("USER").and()
 
                 .exceptionHandling()
                 .accessDeniedHandler((req, resp, ex) -> resp.setStatus(SC_FORBIDDEN))

@@ -29,8 +29,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                          HttpHeaders headers,
                                                          HttpStatus status,
                                                          WebRequest request) {
-        logger.warn("Validation failed", ex);
         BindingResult result = ex.getBindingResult();
+        log.warn("Validation failed: {}", result.getAllErrors());
         CustomHTTPResponse<List<ObjectError>> bodyOfResponse = new CustomHTTPResponse<>(result.getAllErrors(),
                 "Invalid " + result.getObjectName());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
@@ -41,8 +41,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,
                                                                   WebRequest request) {
-        logger.warn("Method argument invalid", ex);
         BindingResult result = ex.getBindingResult();
+        log.warn("Method argument invalid: {}", result.getAllErrors());
         CustomHTTPResponse<List<ObjectError>> bodyOfResponse = new CustomHTTPResponse<>(result.getAllErrors(),
                 "Invalid " + result.getObjectName());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
