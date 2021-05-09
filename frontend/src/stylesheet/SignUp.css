@@ -1,0 +1,22 @@
+.transition {
+    position: absolute;
+    background-color: white;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+}
+.transition-enter {
+    opacity: 0;
+}
+.transition-enter-active {
+    opacity: 1;
+    transition: all 250ms linear 250ms;
+}
+.transition-exit {
+    opacity: 1;
+}
+.transition-exit-active {
+    opacity: 0;
+    transition: opacity 250ms;
+}
