@@ -1,4 +1,4 @@
-package tr.com.bilkent.fods;
+package tr.com.bilkent.patientmonitoring;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

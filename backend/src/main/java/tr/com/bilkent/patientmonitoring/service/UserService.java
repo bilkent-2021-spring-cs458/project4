@@ -1,4 +1,4 @@
-package tr.com.bilkent.fods.service;
+package tr.com.bilkent.patientmonitoring.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,13 +8,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import tr.com.bilkent.fods.dto.user.EditUserDTO;
-import tr.com.bilkent.fods.dto.user.UserRegisterDTO;
-import tr.com.bilkent.fods.dto.user.UserWithoutPasswordDTO;
-import tr.com.bilkent.fods.entity.User;
-import tr.com.bilkent.fods.exception.UsernameExistsException;
-import tr.com.bilkent.fods.mapper.UserMapper;
-import tr.com.bilkent.fods.repository.UserRepository;
+import tr.com.bilkent.patientmonitoring.dto.user.EditUserDTO;
+import tr.com.bilkent.patientmonitoring.dto.user.UserRegisterDTO;
+import tr.com.bilkent.patientmonitoring.dto.user.UserWithoutPasswordDTO;
+import tr.com.bilkent.patientmonitoring.entity.User;
+import tr.com.bilkent.patientmonitoring.exception.UsernameExistsException;
+import tr.com.bilkent.patientmonitoring.mapper.UserMapper;
+import tr.com.bilkent.patientmonitoring.repository.UserRepository;
 
 import java.util.Collections;
 
@@ -30,6 +30,13 @@ public class UserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Returns the user with the given username, or null if it does not exist.
+     */
+    protected User getUser(String username) {
+        return userRepository.findById(username).orElse(null);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = getUser(username);
@@ -40,13 +47,6 @@ public class UserService implements UserDetailsService {
 
         return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), true,
                 true, true, true, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
-    }
-
-    /**
-     * Returns the user with the given username, or null if it does not exist.
-     */
-    protected User getUser(String username) {
-        return userRepository.findById(username).orElse(null);
     }
 
     public void register(UserRegisterDTO dto) {

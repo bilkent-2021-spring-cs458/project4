@@ -1,4 +1,4 @@
-package tr.com.bilkent.fods.config;
+package tr.com.bilkent.patientmonitoring.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +43,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable().cors().and()
 
                 .authorizeRequests()
-                .antMatchers("/user/register").permitAll()
+                .antMatchers("/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/user/register").permitAll()
                 .anyRequest().hasRole("USER").and()
 
                 .exceptionHandling()

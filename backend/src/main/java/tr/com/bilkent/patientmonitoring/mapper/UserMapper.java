@@ -1,14 +1,14 @@
-package tr.com.bilkent.fods.mapper;
+package tr.com.bilkent.patientmonitoring.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
-import tr.com.bilkent.fods.config.MapperConfig;
-import tr.com.bilkent.fods.dto.user.EditUserDTO;
-import tr.com.bilkent.fods.dto.user.UserRegisterDTO;
-import tr.com.bilkent.fods.dto.user.UserWithoutPasswordDTO;
-import tr.com.bilkent.fods.entity.User;
+import tr.com.bilkent.patientmonitoring.config.MapperConfig;
+import tr.com.bilkent.patientmonitoring.dto.user.EditUserDTO;
+import tr.com.bilkent.patientmonitoring.dto.user.UserRegisterDTO;
+import tr.com.bilkent.patientmonitoring.dto.user.UserWithoutPasswordDTO;
+import tr.com.bilkent.patientmonitoring.entity.User;
 
 @Mapper(config = MapperConfig.class)
 public interface UserMapper {

@@ -1,4 +1,4 @@
-package tr.com.bilkent.fods.config;
+package tr.com.bilkent.patientmonitoring.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ public class Swagger2Config {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.any())
+                .apis(RequestHandlerSelectors.basePackage("tr.com.bilkent"))
                 .paths(PathSelectors.any())
                 .build();
     }

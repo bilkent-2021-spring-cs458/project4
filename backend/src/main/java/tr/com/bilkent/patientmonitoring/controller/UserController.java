@@ -1,4 +1,4 @@
-package tr.com.bilkent.fods.controller;
+package tr.com.bilkent.patientmonitoring.controller;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
-import tr.com.bilkent.fods.dto.rest.CustomHTTPResponse;
-import tr.com.bilkent.fods.dto.user.EditUserDTO;
-import tr.com.bilkent.fods.dto.user.UserRegisterDTO;
-import tr.com.bilkent.fods.dto.user.UserWithoutPasswordDTO;
-import tr.com.bilkent.fods.service.UserService;
+import tr.com.bilkent.patientmonitoring.dto.rest.CustomHTTPResponse;
+import tr.com.bilkent.patientmonitoring.dto.user.EditUserDTO;
+import tr.com.bilkent.patientmonitoring.dto.user.UserRegisterDTO;
+import tr.com.bilkent.patientmonitoring.dto.user.UserWithoutPasswordDTO;
+import tr.com.bilkent.patientmonitoring.service.UserService;
 
 import javax.validation.Valid;
 

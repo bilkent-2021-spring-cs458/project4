@@ -1,8 +1,12 @@
-package tr.com.bilkent.fods.dto.user;
+package tr.com.bilkent.patientmonitoring.dto.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class EditUserDTO {
     private String password;
 

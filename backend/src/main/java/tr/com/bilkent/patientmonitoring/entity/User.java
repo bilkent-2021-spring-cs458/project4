@@ -1,9 +1,6 @@
-package tr.com.bilkent.fods.entity;
+package tr.com.bilkent.patientmonitoring.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,8 +10,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 public class User {
+    @EqualsAndHashCode.Include
     @Id
     private String email;
 

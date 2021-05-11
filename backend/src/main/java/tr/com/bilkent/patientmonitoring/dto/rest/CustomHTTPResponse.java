@@ -1,4 +1,4 @@
-package tr.com.bilkent.fods.dto.rest;
+package tr.com.bilkent.patientmonitoring.dto.rest;
 
 import lombok.Getter;
 import lombok.Setter;

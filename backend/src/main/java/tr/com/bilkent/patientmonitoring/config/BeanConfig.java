@@ -1,4 +1,4 @@
-package tr.com.bilkent.fods.config;
+package tr.com.bilkent.patientmonitoring.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
