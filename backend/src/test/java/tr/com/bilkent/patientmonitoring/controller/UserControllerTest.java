@@ -15,11 +15,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import tr.com.bilkent.patientmonitoring.config.BeanConfig;
 import tr.com.bilkent.patientmonitoring.config.WebSecurityConfig;
 import tr.com.bilkent.patientmonitoring.dto.rest.CustomHTTPResponse;
+import tr.com.bilkent.patientmonitoring.dto.symptom.SymptomDataDTO;
 import tr.com.bilkent.patientmonitoring.dto.user.EditUserDTO;
 import tr.com.bilkent.patientmonitoring.dto.user.UserRegisterDTO;
 import tr.com.bilkent.patientmonitoring.dto.user.UserWithoutPasswordDTO;
+import tr.com.bilkent.patientmonitoring.entity.SymptomDataType;
 import tr.com.bilkent.patientmonitoring.service.SymptomService;
 import tr.com.bilkent.patientmonitoring.service.UserService;
+
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +39,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerTest {
     private static final String EMAIL = "email@email.com";
     private static final String PASSWORD = "test123";
+    private static final SymptomDataType SYMPTOM_TYPE = SymptomDataType.SPO2;
+    private static final double VALUE = 7.0;
 
     @Autowired
     private MockMvc mockMvc;
@@ -140,5 +146,30 @@ class UserControllerTest {
         ArgumentCaptor<EditUserDTO> userCaptor = ArgumentCaptor.forClass(EditUserDTO.class);
         verify(userService).edit(eq(EMAIL), userCaptor.capture());
         assertEquals(editUser, userCaptor.getValue());
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL)
+    void getSymptomData() throws Exception {
+        mockMvc.perform(get("/user/symptom"))
+                .andExpect(status().isOk());
+
+        LocalDate from = LocalDate.of(2000, 1, 1);
+        LocalDate to = LocalDate.of(2030, 12, 31);
+        verify(symptomService).getSymptomDataInRange(EMAIL, null, from, to);
+    }
+
+    @Test
+    @WithMockUser(username = EMAIL)
+    void enterSymptomData() throws Exception {
+        LocalDate now = LocalDate.now();
+        SymptomDataDTO symptomData = new SymptomDataDTO(now, SYMPTOM_TYPE, VALUE);
+
+        mockMvc.perform(put("/user/symptom")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(symptomData)))
+                .andExpect(status().isOk());
+
+        verify(symptomService).upsert(EMAIL, symptomData);
     }
 }
