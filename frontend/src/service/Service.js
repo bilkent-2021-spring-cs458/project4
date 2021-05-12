@@ -1,14 +1,21 @@
 import axios from "axios";
+import qs from "querystring";
 import {
     clearLocalStorageWithTTL,
     setLocalStorage,
 } from "./LocalStorageWithExpiry";
 
-const baseUrl = "/api";
+const baseUrl = "https://52.59.101.158:4581/api";
 
 export const getUserDetails = async () => {
-    const response = await request(axios.post, baseUrl);
+    console.log("hi");
+    await axios.post(baseUrl + "/login", null, {
+        withCredentials: true,
+        params: { username: "12@12.com", password: "12345" },
+    });
+    const response = await request(axios.get, baseUrl + "/user/account");
     if (response.status !== 200) {
+        console.log(response);
         throw response;
     }
 
@@ -26,12 +33,35 @@ export const checkEmail = async (email) => {
     return response;
 };
 
-export const signin = async (params) => {
-    console.log(params);
-    const response = await request(axios.post, baseUrl + "/login", params);
+export const getUserSymptoms = async () => {
+    const response = await request(axios.get, baseUrl + "/user/symptom");
     if (response.status !== 200) {
         throw response;
     }
+
+    return response;
+};
+
+export const addNewSymptom = async (symp) => {
+    await axios.post(baseUrl + "/login", null, {
+        withCredentials: true,
+        params: { username: "12@12.com", password: "12345" },
+    });
+    const response = await request(axios.put, baseUrl + "/user/symptom", symp);
+    if (response.status !== 200) {
+        console.log(response);
+        throw response;
+    }
+
+    return response;
+};
+
+export const signin = async (params) => {
+    console.log(params);
+    const response = await axios.post(baseUrl + "/login", null, {
+        withCredentials: true,
+        params: { username: "12@12.com", password: "12345" },
+    });
 
     setLocalStorage("email", params.email, params.remember);
     setLocalStorage("isSignedIn", true);
@@ -72,20 +102,13 @@ const request = async (method, url, params) => {
             response = await method(url, { withCredentials: true });
         }
 
-        return {
-            status: response.status,
-            data: response.data,
-        };
+        return response;
     } catch (error) {
         if (error.response) {
-            return {
-                status: error.response.status,
-                data: error.response.data,
-            };
+            return error.response;
         } else {
             return {
-                status: 503,
-                data: {},
+                status: -1,
             };
         }
     }
