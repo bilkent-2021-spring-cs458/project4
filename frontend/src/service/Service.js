@@ -3,6 +3,16 @@ import { setLocalStorage } from "./LocalStorageWithExpiry";
 
 const baseUrl = "https://52.59.101.158:4581/api";
 
+export const getUserDetails = async () => {
+    const response = await request(axios.get, baseUrl + "/user/account");
+    if (response.status !== 200) {
+        console.log(response);
+        throw response;
+    }
+
+    return response;
+};
+
 export const signin = async (params, remember) => {
     const response = await axios.post(baseUrl + "/login", null, {
         withCredentials: true,
@@ -14,6 +24,25 @@ export const signin = async (params, remember) => {
 
     setLocalStorage("email", params.email, remember);
     setLocalStorage("isSignedIn", true);
+    return response;
+};
+
+export const getUserSymptoms = async () => {
+    const response = await request(axios.get, baseUrl + "/user/symptom");
+    if (response.status !== 200) {
+        throw response;
+    }
+
+    return response;
+};
+
+export const addNewSymptom = async (symp) => {
+    const response = await request(axios.put, baseUrl + "/user/symptom", symp);
+    if (response.status !== 200) {
+        console.log(response);
+        throw response;
+    }
+
     return response;
 };
 
