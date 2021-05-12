@@ -4,17 +4,17 @@ import { Button, withStyles } from "@material-ui/core";
 const StyledButton = withStyles({
     root: {
         textTransform: "none",
-        background: "#e50914",
+        background: "#004C99",
         color: "white",
         borderRadius: 3,
         paddingLeft: "1em",
         paddingRight: "1em",
         margin: 4,
         "&:hover": {
-            background: "#f40612",
+            background: "#0066CC",
         },
         "&:active": {
-            background: "#bb0a12",
+            background: "#004C99",
         },
         "&:focus": {
             outline: "none",
