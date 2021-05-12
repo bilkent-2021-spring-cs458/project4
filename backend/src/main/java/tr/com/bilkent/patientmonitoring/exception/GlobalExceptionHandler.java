@@ -5,6 +5,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -45,6 +46,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         log.warn("Method argument invalid: {}", result.getAllErrors());
         CustomHTTPResponse<List<ObjectError>> bodyOfResponse = new CustomHTTPResponse<>(result.getAllErrors(),
                 "Invalid " + result.getObjectName());
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
+        log.warn("HTTP message not readable: {}", ex.getMessage());
+        CustomHTTPResponse<Void> bodyOfResponse = new CustomHTTPResponse<>(ex.getMessage());
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 

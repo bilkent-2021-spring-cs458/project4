@@ -14,7 +14,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
+  mvc:
+    format:
+      date: yyyy-MM-dd
+
 
 logging:
   file:

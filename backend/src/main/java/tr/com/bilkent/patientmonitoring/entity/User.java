@@ -29,6 +29,4 @@ public class User {
     private String maritalStatus;
 
     private String city;
-
-    private String district;
 }

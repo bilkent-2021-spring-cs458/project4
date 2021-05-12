@@ -18,6 +18,4 @@ public class UserWithoutPasswordDTO {
     private String maritalStatus;
 
     private String city;
-
-    private String district;
 }

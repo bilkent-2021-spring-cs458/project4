@@ -1,10 +1,12 @@
 package tr.com.bilkent.patientmonitoring.service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,10 +32,11 @@ class UserServiceTest {
     private static final String GENDER = "Male";
     private static final String MARITAL_STATUS = "Single";
     private static final String CITY = "Ankara";
-    private static final String DISTRICT = "Cankaya";
 
     @InjectMocks
     private UserService userService;
+
+    private UserDetailsService userDetailsService;
 
     @Mock
     private UserRepository userRepository;
@@ -43,6 +46,11 @@ class UserServiceTest {
 
     @Captor
     private ArgumentCaptor<User> userCaptor;
+
+    @BeforeEach
+    void setUp() {
+        userDetailsService = new CustomUserDetailsService(userService);
+    }
 
     @Test
     void getUserExisting() {
@@ -67,13 +75,13 @@ class UserServiceTest {
         user.setPassword(PASSWORD);
         when(userRepository.findById(EMAIL)).thenReturn(Optional.of(user));
 
-        UserDetails userDetails = userService.loadUserByUsername(EMAIL);
+        UserDetails userDetails = userDetailsService.loadUserByUsername(EMAIL);
         assertEquals(EMAIL, userDetails.getUsername());
     }
 
     @Test
     void loadUserByUsernameNonExisting() {
-        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername(EMAIL));
+        assertThrows(UsernameNotFoundException.class, () -> userDetailsService.loadUserByUsername(EMAIL));
     }
 
     @Test
@@ -132,7 +140,7 @@ class UserServiceTest {
         user.setEmail(EMAIL);
         when(userRepository.findById(EMAIL)).thenReturn(Optional.of(user));
 
-        EditUserDTO editUserDTO = new EditUserDTO(PASSWORD, FULL_NAME, AGE, GENDER, MARITAL_STATUS, CITY, DISTRICT);
+        EditUserDTO editUserDTO = new EditUserDTO(PASSWORD, FULL_NAME, AGE, GENDER, MARITAL_STATUS, CITY);
         userService.edit(EMAIL, editUserDTO);
 
         verify(userRepository).save(userCaptor.capture());
@@ -143,6 +151,5 @@ class UserServiceTest {
         assertEquals(GENDER, userCaptor.getValue().getGender());
         assertEquals(MARITAL_STATUS, userCaptor.getValue().getMaritalStatus());
         assertEquals(CITY, userCaptor.getValue().getCity());
-        assertEquals(DISTRICT, userCaptor.getValue().getDistrict());
     }
 }

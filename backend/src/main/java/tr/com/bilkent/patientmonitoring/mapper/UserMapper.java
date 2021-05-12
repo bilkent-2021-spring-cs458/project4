@@ -17,7 +17,6 @@ public interface UserMapper {
     @Mapping(target = "maritalStatus", ignore = true)
     @Mapping(target = "gender", ignore = true)
     @Mapping(target = "fullName", ignore = true)
-    @Mapping(target = "district", ignore = true)
     @Mapping(target = "city", ignore = true)
     @Mapping(target = "age", ignore = true)
     User userFromDto(UserRegisterDTO user);
