@@ -93,7 +93,6 @@ export default function SignIn() {
         window.location.href = "/";
     }
 
-    const error = useState();
     const [shouldValidate, setShouldValidate] = useState(false);
     const submit = (e) => {
         e.preventDefault();
@@ -133,8 +132,6 @@ export default function SignIn() {
                             paragraph
                             variant="h4"
                         ></WhiteTypography>
-
-                        {error}
 
                         <NfValidatedTextField
                             type="email"

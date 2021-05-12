@@ -8,7 +8,7 @@ export default function App() {
     return (
         <Router>
             <Switch>
-                <Route path="/signup" component={SignUp} />
+                <Route exact path={["/signup", "/"]} component={SignUp} />
                 <Route exact path="/info" component={Info} />
                 <Route path="/signin" component={SignIn} />
             </Switch>

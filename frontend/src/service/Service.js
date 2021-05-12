@@ -1,30 +1,7 @@
 import axios from "axios";
-import {
-    clearLocalStorageWithTTL,
-    setLocalStorage,
-} from "./LocalStorageWithExpiry";
+import { setLocalStorage } from "./LocalStorageWithExpiry";
 
 const baseUrl = "https://52.59.101.158:4581/api";
-
-export const getUserDetails = async () => {
-    const response = await request(axios.post, baseUrl);
-    if (response.status !== 200) {
-        throw response;
-    }
-
-    return response;
-};
-
-export const checkEmail = async (email) => {
-    const response = await request(axios.post, baseUrl + "/check_email", {
-        email,
-    });
-    if (response.status !== 200) {
-        throw response;
-    }
-
-    return response;
-};
 
 export const signin = async (params, remember) => {
     const response = await axios.post(baseUrl + "/login", null, {
@@ -46,13 +23,13 @@ export const signup = async (params) => {
         baseUrl + "/user/register",
         params
     );
+    console.log("signup", response);
     if (response.status != 200) {
         throw response;
     }
     setLocalStorage("email", params.email);
-    setLocalStorage("password", params.password);
 
-    signin({ username: params.email, password: params.password });
+    await signin({ username: params.email, password: params.password });
     return response;
 };
 
@@ -66,12 +43,6 @@ export const editInfo = async (params) => {
         throw response;
     }
 
-    setLocalStorage("email", params.fullname);
-    setLocalStorage("email", params.age);
-    setLocalStorage("email", params.gender);
-    setLocalStorage("email", params.city);
-    setLocalStorage("email", params.status);
-    setLocalStorage("email", params.password);
     return response;
 };
 
@@ -84,19 +55,13 @@ const request = async (method, url, params) => {
             response = await method(url, { withCredentials: true });
         }
 
-        return {
-            status: response.status,
-            data: response.data,
-        };
+        return response;
     } catch (error) {
         if (error.response) {
-            return {
-                status: error.response.status,
-                data: error.response.data,
-            };
+            return error.response;
         } else {
             return {
-                status: 503,
+                status: -1,
                 data: {},
             };
         }

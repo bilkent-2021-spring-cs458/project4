@@ -72,7 +72,6 @@ const WhiteTypography = withStyles({
 })(Typography);
 
 export default function SignUp() {
-    const error = useState();
     const submit = (e) => {
         e.preventDefault();
 
@@ -93,6 +92,7 @@ export default function SignUp() {
                 window.location.href = "/info";
             })
             .catch((response) => {
+                console.log(response);
                 if (response.status == 409) {
                     alert("There already exists an account with that email");
                 } else if (response.status == 400) {
@@ -116,8 +116,6 @@ export default function SignUp() {
                     </WhiteTypography>
 
                     <WhiteTypography paragraph variant="h4"></WhiteTypography>
-
-                    {error}
 
                     <NfValidatedTextField
                         type="email"

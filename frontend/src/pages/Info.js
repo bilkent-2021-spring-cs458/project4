@@ -83,9 +83,7 @@ export default function Info() {
             status,
             password,
         };
-        Object.keys(user).forEach(
-            (key) => user[key] == false && delete user[key]
-        );
+        Object.keys(user).forEach((key) => !user[key] && delete user[key]);
         console.log(user);
         editInfo(user)
             .then(() => {
