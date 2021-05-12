@@ -1,5 +1,4 @@
 import {
-    AppBar,
     Box,
     Container,
     makeStyles,
@@ -12,34 +11,23 @@ import {
 import { CheckBox as CheckBoxIcon } from "@material-ui/icons";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "~/assets/logo.svg";
 import NfRedButton from "~/components/NfRedButton";
 import NfValidatedTextField from "~/components/NfValidatedTextField";
-import backgroundImg from "~/assets/background.jpg";
 import { signin } from "~/service/Service";
 import { validateEmail, validatePassword } from "~/validators";
 import { getLocalStorage } from "~/service/LocalStorageWithExpiry";
 
 const useStyles = makeStyles({
     paper: {
-        backgroundImage: `linear-gradient(to top,
-			rgba(0,0,0,.8) 0,
-			rgba(0,0,0,.4) 60%,
-			rgba(0,0,0,.8) 100%), url(${backgroundImg})`,
         height: 750,
     },
-    header: {
-        boxShadow: "none",
-        background: "transparent",
-        height: "90px",
-        padding: "25px",
-    },
     centerForm: {
+        marginTop: "90px",
         padding: "60px 68px 123px",
-        background: "rgba(0, 0, 0, 0.75)",
+        background: "rgba(0, 153, 153, 0.91)",
     },
     uiMessage: {
-        backgroundColor: "#e87c03",
+        backgroundColor: "#000000",
         borderRadius: "4px",
         color: "white",
         fontSize: "14px",
@@ -49,54 +37,47 @@ const useStyles = makeStyles({
     textField: {
         paddingBottom: "16px",
         "& .MuiFormHelperText-root": {
-            color: "#e87c03",
+            color: "#000000",
             fontSize: "13px",
         },
         "& .MuiInputBase-root": {
-            backgroundColor: "rgb(51, 51, 51)",
+            backgroundColor: "rgb(255, 255, 255)",
             borderRadius: "4px",
-            borderColor: "rgb(51, 51, 51)",
+            borderColor: "rgb(255, 255, 255)",
         },
         "& .MuiInputBase-input": {
-            color: "white",
+            color: "black",
         },
         "& .MuiInputBase-root.Mui-focused": {
-            backgroundColor: "rgb(69, 69, 69)",
-            borderTopColor: "rgb(69, 69, 69)",
-            borderLeftColor: "rgb(69, 69, 69)",
-            borderRightColor: "rgb(69, 69, 69)",
+            backgroundColor: "rgb(255, 255, 255)",
+            borderColor: "rgb(255, 255, 255)",
         },
         "& .MuiInputBase-root.Mui-focused:not(.Mui-error)": {
-            borderBottomColor: "rgb(69, 69, 69)",
+            borderBottomColor: "rgb(255, 255, 255)",
         },
     },
     checkbox: {
         fontSize: "25px",
-        color: "#737373",
+        color: "#FFFFFF",
         paddingRight: "0",
         "&:hover": {
             backgroundColor: "transparent !important",
         },
     },
     remember: {
-        color: "#b3b3b3",
+        color: "#FFFFFF",
         flexGrow: 1,
         "& .MuiTypography-root": {
             fontSize: "13px",
         },
     },
     link: {
-        color: "white",
+        color: "blue",
         cursor: "pointer",
         textDecoration: "none",
         "&:hover": {
             textDecoration: "underline",
         },
-    },
-    help: {
-        paddingTop: "10px",
-        color: "#b3b3b3",
-        fontSize: "13px",
     },
 });
 
@@ -112,7 +93,7 @@ export default function SignIn() {
         window.location.href = "/";
     }
 
-    const [error, setError] = useState();
+    const error = useState();
     const [shouldValidate, setShouldValidate] = useState(false);
     const submit = (e) => {
         e.preventDefault();
@@ -125,33 +106,14 @@ export default function SignIn() {
             return;
         }
 
-        signin({ email, password, remember })
+        signin({ username: email, password }, remember)
             .then(() => (window.location.href = "/"))
             .catch((response) => {
-                sessionStorage.setItem("email", email);
-                setError(
-                    <div className={classes.uiMessage}>
-                        {response.data.error === "INCORRECT_PASSWORD" ? (
-                            <>
-                                Incorrect password. Please try again or you
-                                can&nbsp;
-                                <Link to="#" style={{ color: "inherit" }}>
-                                    reset your password
-                                </Link>
-                                .
-                            </>
-                        ) : (
-                            <>
-                                Sorry, we can&apos;t find an account with this
-                                email address. Please try again or&nbsp;
-                                <Link to="/" style={{ color: "inherit" }}>
-                                    create a new account
-                                </Link>
-                                .
-                            </>
-                        )}
-                    </div>
-                );
+                if (response.status == 401) {
+                    alert("Incorrect email or password provided!");
+                } else {
+                    alert("Unknown error occured!");
+                }
             });
     };
 
@@ -159,14 +121,6 @@ export default function SignIn() {
     return (
         !isSignedIn && (
             <div className={classes.paper}>
-                <AppBar position="static" className={classes.header}>
-                    <Box>
-                        <Link to="/">
-                            <img height="44" src={logo} alt="logo" />
-                        </Link>
-                    </Box>
-                </AppBar>
-
                 <Container maxWidth="xs" className={classes.centerForm}>
                     <form onSubmit={submit}>
                         <WhiteTypography paragraph variant="h4">
@@ -235,16 +189,13 @@ export default function SignIn() {
                                 className={classes.remember}
                                 label="Remember me"
                             />
-                            <a className={classes.link + " " + classes.help}>
-                                Need help?
-                            </a>
                         </div>
                     </form>
 
                     <br />
-                    <div style={{ color: "#737373" }}>
-                        New to Netflix?&nbsp;
-                        <Link to="/" className={classes.link}>
+                    <div style={{ color: "#FFFFFF" }}>
+                        Don&apos;t have an account yet?&nbsp;
+                        <Link to="/signup" className={classes.link}>
                             Sign up now
                         </Link>
                     </div>

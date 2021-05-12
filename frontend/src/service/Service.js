@@ -4,7 +4,7 @@ import {
     setLocalStorage,
 } from "./LocalStorageWithExpiry";
 
-const baseUrl = "/api";
+const baseUrl = "https://52.59.101.158:4581/api";
 
 export const getUserDetails = async () => {
     const response = await request(axios.post, baseUrl);
@@ -26,40 +26,52 @@ export const checkEmail = async (email) => {
     return response;
 };
 
-export const signin = async (params) => {
-    console.log(params);
-    const response = await request(axios.post, baseUrl + "/login", params);
+export const signin = async (params, remember) => {
+    const response = await axios.post(baseUrl + "/login", null, {
+        withCredentials: true,
+        params: params,
+    });
     if (response.status !== 200) {
         throw response;
     }
 
-    setLocalStorage("email", params.email, params.remember);
+    setLocalStorage("email", params.email, remember);
     setLocalStorage("isSignedIn", true);
     return response;
 };
 
 export const signup = async (params) => {
-    const response = await request(axios.post, baseUrl + "/signup", params);
-    if (response.status !== 200) {
+    const response = await request(
+        axios.post,
+        baseUrl + "/user/register",
+        params
+    );
+    if (response.status != 200) {
         throw response;
     }
-
-    setLocalStorage("isSignedIn", true);
     setLocalStorage("email", params.email);
+    setLocalStorage("password", params.password);
+
+    signin({ username: params.email, password: params.password });
     return response;
 };
 
-export const signout = async () => {
-    await request(axios.post, baseUrl + "/logout");
-    clearLocalStorageWithTTL();
-    sessionStorage.clear();
-};
-
-export const setPaymentPlan = async (params) => {
-    const response = await request(axios.post, baseUrl + "/set_plan", params);
+export const editInfo = async (params) => {
+    const response = await request(
+        axios.patch,
+        baseUrl + "/user/account",
+        params
+    );
     if (response.status !== 200) {
         throw response;
     }
+
+    setLocalStorage("email", params.fullname);
+    setLocalStorage("email", params.age);
+    setLocalStorage("email", params.gender);
+    setLocalStorage("email", params.city);
+    setLocalStorage("email", params.status);
+    setLocalStorage("email", params.password);
     return response;
 };
 
