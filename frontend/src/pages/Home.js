@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core";
-import { Dropdown, Form, Modal, Button } from "react-bootstrap";
+import { Dropdown, Form, Modal, Button, Col, Row } from "react-bootstrap";
 import moment from "moment";
 import DateFnsUtils from "@date-io/date-fns";
 import {
@@ -8,28 +8,33 @@ import {
     KeyboardDatePicker,
 } from "@material-ui/pickers";
 import { getLocalStorage } from "~/service/LocalStorageWithExpiry";
+import { useHistory } from "react-router-dom";
 import {
     getUserDetails,
     getUserSymptoms,
     addNewSymptom,
+    signout,
 } from "~/service/Service";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const useStyles = makeStyles({
     mainDiv: {
-        background:
-            "linear-gradient(to right, #E2E2E2, #C9D6FF)" /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */,
-
-        height: "100vh",
+        background: "linear-gradient(to right, #E2E2E2, #C9D6FF)",
         padding: "2% 10%",
+        overflow: "hidden",
     },
     panel: {
+        overflow: "hidden",
         background: "rgba( 255, 255, 255, 0.40 )",
         boxShadow: "0 8px 32px 0 rgba( 31, 38, 135, 0.37 )",
         borderRadius: "10px",
         border: "1px solid rgba( 255, 255, 255, 0.18 )",
         padding: "3%",
         marginBottom: "5%",
+    },
+    label: {
+        display: "inline-block",
+        marginBottom: ".5rem",
     },
 });
 
@@ -38,14 +43,18 @@ const limits = {
     highestTemp: 45,
     normalityLimit: 37,
     scaleLimit: 6,
+    lowestSp: 0,
+    highestSp: 100,
+    spLimit: 95,
 };
 
 export default function Home() {
+    const history = useHistory();
     const [userDetails, setUserDetails] = useState({ loading: "Loading..." });
     const [userSymptoms, updateSypmtoms] = useState({ loading: "Loading..." });
     const [component, setComponent] = useState("");
     const [value, setValue] = useState("");
-    const [date, setDate] = useState(moment(new Date()).format("YYYY-MM-DD"));
+    const [date, setDate] = useState();
     const [show, setShow] = useState(false);
     const [message, setMessage] = useState("");
 
@@ -66,7 +75,6 @@ export default function Home() {
         getUserDetails()
             .then((response) => {
                 setUserDetails(response.data);
-                console.log(response.data);
             })
             .catch((err) => {
                 if (err.status == 401) {
@@ -100,17 +108,24 @@ export default function Home() {
     };
 
     const handleClose = () => setShow(false);
-
+    const handleLogout = () => {
+        signout()
+            .then(() => {
+                history.push("/signup");
+            })
+            .catch(() => {
+                alert("An error occured while trying to log out.");
+            });
+    };
     const addSymptom = () => {
         var valid = true;
-
-        if (component === "" || value === null) {
+        console.log(component, value);
+        if (component === "" || value === null || value === "") {
             setShow(true);
             setMessage("Please fill all fields.");
             valid = false;
         }
         var val = parseInt(value);
-        console.log(val);
         if (parseInt(value) === isNaN) {
             setShow(true);
             setMessage("Please enter a numeric value");
@@ -127,6 +142,17 @@ export default function Home() {
                 setMessage("Value is higher than normal!");
                 valid = true;
             }
+        } else if (component == "Sp02") {
+            if (val < limits.lowestSp || val > limits.highestSp) {
+                setShow(true);
+                setMessage("Please enter a valid temptrature");
+                valid = false;
+            }
+            if (val < limits.spLimit) {
+                setShow(true);
+                setMessage("Value is lower than normal!");
+                valid = true;
+            }
         } else {
             if (val < 0 || val > 10) {
                 setShow(true);
@@ -139,10 +165,7 @@ export default function Home() {
                 valid = true;
             }
         }
-        console.log(valid);
         if (valid) {
-            console.log(value, valid);
-
             const componentSelected = (component) => {
                 switch (component) {
                     case "Fever":
@@ -160,7 +183,6 @@ export default function Home() {
                 }
             };
             const selectedValue = parseInt(value);
-            console.log(moment(date).format("YYYY-MM-DD"));
             var sypmtom = {
                 date: moment(date).format("YYYY-MM-DD"),
                 type: componentSelected(component),
@@ -205,7 +227,7 @@ export default function Home() {
                     </p>
                     <p className="col">
                         {userDetails.loading || (
-                            <>District:&nbsp; {userDetails.data.district}</>
+                            <>Gender: &nbsp; {userDetails.data.gender}</>
                         )}
                     </p>
                 </div>
@@ -215,13 +237,6 @@ export default function Home() {
                             <>Email: &nbsp; {userDetails.data.email}</>
                         )}
                     </p>
-                    <p className="col">
-                        {userDetails.loading || (
-                            <>Gender: &nbsp; {userDetails.data.gender}</>
-                        )}
-                    </p>
-                </div>
-                <div className="row">
                     <p className="col">
                         {userDetails.loading || (
                             <>
@@ -243,60 +258,103 @@ export default function Home() {
                             </p>
                         );
                     })}
-                <div>
-                    <Dropdown
-                        onSelect={function (evt, eventkey) {
-                            setComponent(eventkey.target.innerHTML);
-                        }}
-                    >
-                        <Dropdown.Toggle variant="success" id="dropdown-basic">
-                            {component === "" ? "Select Symptom" : component}
-                        </Dropdown.Toggle>
 
-                        <Dropdown.Menu>
-                            {symptoms.map((item, index) => {
-                                return (
-                                    <Dropdown.Item key={index}>
-                                        {item}
-                                    </Dropdown.Item>
-                                );
-                            })}
-                        </Dropdown.Menu>
-                    </Dropdown>
+                <button
+                    className="btn btn-primary "
+                    style={{ float: "right" }}
+                    onClick={() => history.push("/info")}
+                >
+                    Edit
+                </button>
+            </div>
+            <div className={classes.panel}>
+                <h2>Add Symptom</h2>
+                <div>
+                    <div className="row" style={{ marginBottom: "3%" }}>
+                        <p className="label col-2">Symptom</p>
+                        <Dropdown
+                            className="col"
+                            style={{ width: "100%" }}
+                            onSelect={function (evt, eventkey) {
+                                setComponent(eventkey.target.innerHTML);
+                            }}
+                        >
+                            <Dropdown.Toggle id="dropdown-basic">
+                                {component === ""
+                                    ? "Select Symptom"
+                                    : component}
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                                {symptoms.map((item, index) => {
+                                    return (
+                                        <Dropdown.Item key={index}>
+                                            {item}
+                                        </Dropdown.Item>
+                                    );
+                                })}
+                            </Dropdown.Menu>
+                        </Dropdown>
+                    </div>
                     <Form.Group
+                        as={Row}
                         onChange={function (evt) {
-                            console.log("Event:", evt);
                             setValue(evt.target.value);
                         }}
                     >
-                        <Form.Control type="text" placeholder="Value" />
+                        <Form.Label column sm="2">
+                            Email
+                        </Form.Label>
+                        <Col sm="10">
+                            <Form.Control type="text" placeholder="Value" />
+                        </Col>
                     </Form.Group>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                            disableToolbar
-                            variant="inline"
-                            format="yyyy-MM-dd"
-                            maxDate={new Date()}
-                            margin="normal"
-                            id="date-picker-inline"
-                            label="Date picker inline"
-                            value={date}
-                            onChange={(newDate) => setDate(newDate)}
-                            KeyboardButtonProps={{
-                                "aria-label": "change date",
-                            }}
-                        />
-                    </MuiPickersUtilsProvider>
-
-                    <button
-                        onClick={() => addSymptom()}
-                        className="btn btn-primary"
-                    >
-                        Add Symptom
-                    </button>
+                    <div className="row">
+                        <p
+                            className="label col-2"
+                            style={{ marginTop: "16px", marginRight: "15px" }}
+                        >
+                            Date
+                        </p>
+                        <MuiPickersUtilsProvider
+                            className="col edited"
+                            utils={DateFnsUtils}
+                        >
+                            <KeyboardDatePicker
+                                disableToolbar
+                                variant="inline"
+                                format="yyyy-MM-dd"
+                                maxDate={new Date()}
+                                margin="normal"
+                                id="date-picker-inline"
+                                label="Date picker inline"
+                                value={date}
+                                onChange={(newDate) => setDate(newDate)}
+                                KeyboardButtonProps={{
+                                    "aria-label": "change date",
+                                }}
+                            />
+                        </MuiPickersUtilsProvider>
+                    </div>
                 </div>
-            </div>
 
+                <button
+                    onClick={() => addSymptom()}
+                    className="btn btn-primary "
+                    style={{ float: "right" }}
+                >
+                    Add Symptom
+                </button>
+            </div>
+            <div>
+                <button
+                    className="btn btn-primary "
+                    style={{ float: "right" }}
+                    onClick={handleLogout}
+                >
+                    Log Out
+                </button>
+            </div>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Warning</Modal.Title>

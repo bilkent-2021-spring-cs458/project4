@@ -68,19 +68,19 @@ export default function Info() {
     const submit = (e) => {
         e.preventDefault();
 
-        const fullname = e.target.fullname.value;
+        const fullName = e.target.fullname.value;
         const age = e.target.age.value;
         const gender = e.target.gender.value;
         const city = e.target.city.value;
-        const status = e.target.status.value;
+        const maritalStatus = e.target.status.value;
         const password = e.target.password.value;
 
         let user = {
-            fullname,
+            fullName,
             age,
             gender,
             city,
-            status,
+            maritalStatus,
             password,
         };
         Object.keys(user).forEach((key) => !user[key] && delete user[key]);

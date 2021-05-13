@@ -27,6 +27,18 @@ export const signin = async (params, remember) => {
     return response;
 };
 
+export const signout = async () => {
+    const response = await axios.post(baseUrl + "/logout", null, {
+        withCredentials: true,
+    });
+    if (response.status !== 200) {
+        throw response;
+    }
+
+    setLocalStorage("isSignedIn", false);
+    return response;
+};
+
 export const getUserSymptoms = async () => {
     const response = await request(axios.get, baseUrl + "/user/symptom");
     if (response.status !== 200) {
