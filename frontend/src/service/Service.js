@@ -1,7 +1,10 @@
 import axios from "axios";
-import { setLocalStorage } from "./LocalStorageWithExpiry";
+import {
+    clearLocalStorageWithTTL,
+    setLocalStorage,
+} from "./LocalStorageWithExpiry";
 
-const baseUrl = "https://52.59.101.158:4581/api";
+const baseUrl = "/api";
 
 export const getUserDetails = async () => {
     const response = await request(axios.get, baseUrl + "/user/account");
@@ -28,15 +31,11 @@ export const signin = async (params, remember) => {
 };
 
 export const signout = async () => {
-    const response = await axios.post(baseUrl + "/logout", null, {
+    await axios.post(baseUrl + "/logout", null, {
         withCredentials: true,
     });
-    if (response.status !== 200) {
-        throw response;
-    }
-
-    setLocalStorage("isSignedIn", false);
-    return response;
+    clearLocalStorageWithTTL();
+    sessionStorage.clear();
 };
 
 export const getUserSymptoms = async () => {

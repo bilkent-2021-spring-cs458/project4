@@ -54,6 +54,7 @@ export default function Home() {
     const [userSymptoms, updateSypmtoms] = useState({ loading: "Loading..." });
     const [component, setComponent] = useState("");
     const [value, setValue] = useState("");
+    const [valid, setValid] = useState(true);
     const [date, setDate] = useState();
     const [show, setShow] = useState(false);
     const [message, setMessage] = useState("");
@@ -117,54 +118,59 @@ export default function Home() {
                 alert("An error occured while trying to log out.");
             });
     };
-    const addSymptom = () => {
-        var valid = true;
-        console.log(component, value);
+    const validate = () => {
         if (component === "" || value === null || value === "") {
             setShow(true);
             setMessage("Please fill all fields.");
-            valid = false;
-        }
-        var val = parseInt(value);
-        if (parseInt(value) === isNaN) {
+            setValid(false);
+            return;
+        } else if (parseInt(value) === isNaN) {
             setShow(true);
             setMessage("Please enter a numeric value");
-            valid = false;
+            setValid(false);
+            return;
         }
+        var val = parseInt(value);
         if (component === "Fever") {
             if (val > limits.highestTemp || val < limits.lowestTemp) {
                 setShow(true);
                 setMessage("Please enter a valid temptrature");
-                valid = false;
+                setValid(false);
+                return;
             }
             if (val > limits.normalityLimit) {
                 setShow(true);
                 setMessage("Value is higher than normal!");
-                valid = true;
+                setValid(true);
             }
-        } else if (component == "Sp02") {
+        } else if (component === "SpO2") {
             if (val < limits.lowestSp || val > limits.highestSp) {
                 setShow(true);
                 setMessage("Please enter a valid temptrature");
-                valid = false;
+                setValid(false);
+                return;
             }
             if (val < limits.spLimit) {
                 setShow(true);
                 setMessage("Value is lower than normal!");
-                valid = true;
+                setValid(true);
             }
         } else {
             if (val < 0 || val > 10) {
                 setShow(true);
                 setMessage("Please enter a valid value");
-                valid = false;
+                setValid(false);
+                return;
             }
             if (val > limits.scaleLimit) {
                 setShow(true);
                 setMessage("Value is higher than normal!");
-                valid = true;
+                setValid(true);
             }
         }
+    };
+    const addSymptom = () => {
+        validate();
         if (valid) {
             const componentSelected = (component) => {
                 switch (component) {
@@ -246,6 +252,13 @@ export default function Home() {
                         )}
                     </p>
                 </div>
+                <button
+                    className="btn btn-primary "
+                    style={{ float: "right" }}
+                    onClick={() => history.push("/info")}
+                >
+                    Edit
+                </button>
             </div>
             <div className={classes.panel}>
                 <h2>Symptoms</h2>
@@ -258,14 +271,6 @@ export default function Home() {
                             </p>
                         );
                     })}
-
-                <button
-                    className="btn btn-primary "
-                    style={{ float: "right" }}
-                    onClick={() => history.push("/info")}
-                >
-                    Edit
-                </button>
             </div>
             <div className={classes.panel}>
                 <h2>Add Symptom</h2>

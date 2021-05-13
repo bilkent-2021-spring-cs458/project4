@@ -107,12 +107,8 @@ export default function SignIn() {
 
         signin({ username: email, password }, remember)
             .then(() => (window.location.href = "/"))
-            .catch((response) => {
-                if (response.status == 401) {
-                    alert("Incorrect email or password provided!");
-                } else {
-                    alert("Unknown error occured!");
-                }
+            .catch(() => {
+                alert("Incorrect email or password provided!");
             });
     };
 
